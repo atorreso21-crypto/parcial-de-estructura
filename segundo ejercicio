@@ -1,0 +1,74 @@
+package main;
+
+import java.util.*;
+
+public class Ejercicio2_Prim_V2 {
+
+    public static void main(String[] args) {
+        int n = 8;
+        int[][] g = new int[n][n];
+        Random random = new Random();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                if (i == j) g[i][j] = 0;
+                else {
+                    int peso = random.nextInt(20) + 1;
+                    g[i][j] = peso;
+                    g[j][i] = peso;
+                }
+            }
+        }
+
+        boolean[] visitado = new boolean[n];
+        int[] costo = new int[n];
+        int[] padre = new int[n];
+        ArrayList<Integer> orden = new ArrayList<>();
+
+        Arrays.fill(costo, 999999);
+        costo[0] = 0;
+        padre[0] = -1;
+
+        int comparaciones = 0;
+        int total = 0;
+
+        for (int i = 0; i < n; i++) {
+            int u = -1;
+            int menor = 999999;
+
+            for (int j = 0; j < n; j++) {
+                comparaciones++;
+                if (!visitado[j] && costo[j] < menor) {
+                    menor = costo[j];
+                    u = j;
+                }
+            }
+
+            visitado[u] = true;
+            orden.add(u);
+
+            if (padre[u] != -1) {
+                total += g[u][padre[u]];
+            }
+
+            for (int v = 0; v < n; v++) {
+                comparaciones++;
+                if (!visitado[v] && g[u][v] != 0 && g[u][v] < costo[v]) {
+                    costo[v] = g[u][v];
+                    padre[v] = u;
+                }
+            }
+        }
+
+        System.out.println("Orden de selección:");
+        System.out.println(orden);
+
+        System.out.println("\nAristas del MST:");
+        for (int i = 1; i < n; i++) {
+            System.out.println(padre[i] + " - " + i + " peso " + g[i][padre[i]]);
+        }
+
+        System.out.println("\nCosto total: " + total);
+        System.out.println("Comparaciones: " + comparaciones);
+    }
+}
