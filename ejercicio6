@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Ejercicio6_Floyd_V2 {
+public class Ejercicio6_Floyd {
 
     static int INF = 999999;
 
