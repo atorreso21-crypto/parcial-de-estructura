@@ -1,0 +1,52 @@
+
+
+public class Ejercicio6_Floyd_V2 {
+
+    public static void main(String[] args) {
+        int INF = 999999;
+
+        int[][] dist = {
+            {9, 5, INF, 10},
+            {INF, 1, 8, INF},
+            {INF, INF, 2, 2},
+            {INF, INF, INF, 6}
+        };
+
+        int n = dist.length;
+
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dist[i][k] != INF && dist[k][j] != INF) {
+                        if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                            dist[i][j] = dist[i][k] + dist[k][j];
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println("Matriz de distancias mínimas:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][j] == INF) System.out.print("INF ");
+                else System.out.print(dist[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        boolean negativo = false;
+        for (int i = 0; i < n; i++) {
+            if (dist[i][i] < 0) {
+                negativo = true;
+            }
+        }
+
+        if (negativo) {
+            System.out.println("Se detectaron ciclos negativos.");
+            System.out.println("Se deben eliminar las aristas implicadas y ejecutar otra vez.");
+        } else {
+            System.out.println("No hay ciclos negativos.");
+        }
+    }
+}
