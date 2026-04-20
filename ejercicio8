@@ -1,0 +1,115 @@
+import java.util.*;
+
+public class RedSocial {
+    // Grafo no dirigido usando lista de adyacencia
+    private Map<String, Set<String>> grafo;
+
+    public RedSocial() {
+        grafo = new HashMap<>();
+    }
+
+    // Agregar usuario
+    public void agregarUsuario(String usuario) {
+        grafo.putIfAbsent(usuario, new HashSet<>());
+    }
+
+    // Agregar amistad (arista no dirigida)
+    public void agregarAmistad(String u1, String u2) {
+        agregarUsuario(u1);
+        agregarUsuario(u2);
+
+        grafo.get(u1).add(u2);
+        grafo.get(u2).add(u1);
+    }
+
+    // Mostrar la red
+    public void mostrarRed() {
+        for (String usuario : grafo.keySet()) {
+            System.out.println(usuario + " -> " + grafo.get(usuario));
+        }
+    }
+
+    // Recomendar amigos a dos saltos: amigos de mis amigos
+    public List<String> recomendarAmigos(String usuario) {
+        List<String> recomendaciones = new ArrayList<>();
+
+        if (!grafo.containsKey(usuario)) {
+            return recomendaciones;
+        }
+
+        Set<String> amigosDirectos = grafo.get(usuario);
+        Set<String> recomendados = new HashSet<>();
+
+        for (String amigo : amigosDirectos) {
+            for (String amigoDeMiAmigo : grafo.get(amigo)) {
+                if (!amigoDeMiAmigo.equals(usuario) && !amigosDirectos.contains(amigoDeMiAmigo)) {
+                    recomendados.add(amigoDeMiAmigo);
+                }
+            }
+        }
+
+        recomendaciones.addAll(recomendados);
+        return recomendaciones;
+    }
+
+    // Ruta más corta entre dos usuarios usando BFS
+    public int rutaMasCorta(String u1, String u2) {
+        if (!grafo.containsKey(u1) || !grafo.containsKey(u2)) {
+            return -1;
+        }
+
+        if (u1.equals(u2)) {
+            return 0;
+        }
+
+        Queue<String> cola = new LinkedList<>();
+        Set<String> visitados = new HashSet<>();
+        Map<String, Integer> distancia = new HashMap<>();
+
+        cola.offer(u1);
+        visitados.add(u1);
+        distancia.put(u1, 0);
+
+        while (!cola.isEmpty()) {
+            String actual = cola.poll();
+
+            for (String vecino : grafo.get(actual)) {
+                if (!visitados.contains(vecino)) {
+                    visitados.add(vecino);
+                    distancia.put(vecino, distancia.get(actual) + 1);
+                    cola.offer(vecino);
+
+                    if (vecino.equals(u2)) {
+                        return distancia.get(vecino);
+                    }
+                }
+            }
+        }
+
+        return -1; // No existe conexión
+    }
+
+    // Método principal de prueba
+    public static void main(String[] args) {
+        RedSocial red = new RedSocial();
+
+        red.agregarAmistad("Ana", "Luis");
+        red.agregarAmistad("Ana", "Carlos");
+        red.agregarAmistad("Luis", "Marta");
+        red.agregarAmistad("Carlos", "Pedro");
+        red.agregarAmistad("Marta", "Sofia");
+        red.agregarAmistad("Pedro", "Elena");
+
+        System.out.println("Red social:");
+        red.mostrarRed();
+
+        System.out.println("\nRecomendaciones para Ana:");
+        System.out.println(red.recomendarAmigos("Ana"));
+
+        System.out.println("\nRuta más corta entre Ana y Sofia:");
+        System.out.println(red.rutaMasCorta("Ana", "Sofia"));
+
+        System.out.println("\nRuta más corta entre Ana y Elena:");
+        System.out.println(red.rutaMasCorta("Ana", "Elena"));
+    }
+}
