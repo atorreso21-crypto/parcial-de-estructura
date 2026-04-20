@@ -1,0 +1,74 @@
+public class Ejercicio7_Warshall_V2 {
+
+    public static void main(String[] args) {
+        int[][] g = {
+            {0, 1, 0, 0},
+            {0, 0, 1, 0},
+            {1, 0, 0, 0},
+            {0, 0, 0, 0}
+        };
+
+        int n = g.length;
+        int[][] alc = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                alc[i][j] = g[i][j];
+            }
+            alc[i][i] = 1;
+        }
+
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (alc[i][k] == 1 && alc[k][j] == 1) {
+                        alc[i][j] = 1;
+                    }
+                }
+            }
+        }
+
+        System.out.println("Matriz de alcanzabilidad:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.print(alc[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        boolean fuerte = true;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (alc[i][j] == 0) fuerte = false;
+            }
+        }
+
+        if (fuerte) {
+            System.out.println("El grafo es fuertemente conexo.");
+        } else {
+            System.out.println("El grafo no es fuertemente conexo.");
+            System.out.println("CFC encontrados:");
+
+            boolean[] marcado = new boolean[n];
+            int cont = 1;
+
+            for (int i = 0; i < n; i++) {
+                if (!marcado[i]) {
+                    System.out.print("CFC" + cont + ": [");
+                    boolean primero = true;
+
+                    for (int j = 0; j < n; j++) {
+                        if (!marcado[j] && alc[i][j] == 1 && alc[j][i] == 1) {
+                            if (!primero) System.out.print(", ");
+                            System.out.print(j);
+                            marcado[j] = true;
+                            primero = false;
+                        }
+                    }
+                    System.out.println("]");
+                    cont++;
+                }
+            }
+        }
+    }
+}
