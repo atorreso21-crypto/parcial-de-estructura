@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class Ejercicio3_Kruskal_V2 {
+
+    public static void main(String[] args) {
+        int n = 5;
+        int[][] aristas = {
+            {0, 1, 6},
+            {0, 2, -3},
+            {1, 2, 2},
+            {1, 3, 5},
+            {2, 3, 3},
+            {2, 4, 4},
+            {3, 4, -2}
+        };
+
+        Arrays.sort(aristas, (a, b) -> a[2] - b[2]);
+
+        System.out.println("Aristas ordenadas:");
+        for (int[] a : aristas) {
+            System.out.println(a[0] + " - " + a[1] + " peso " + a[2]);
+        }
+
+        int[] padre = new int[n];
+        for (int i = 0; i < n; i++) padre[i] = i;
+
+        int ciclos = 0;
+        int costo = 0;
+        ArrayList<int[]> mst = new ArrayList<>();
+
+        for (int[] a : aristas) {
+            int ru = encontrar(padre, a[0]);
+            int rv = encontrar(padre, a[1]);
+
+            if (ru != rv) {
+                padre[ru] = rv;
+                mst.add(a);
+                costo += a[2];
+            } else {
+                ciclos++;
+            }
+        }
+
+        System.out.println("\nCiclos descartados: " + ciclos);
+
+        System.out.println("\nMST:");
+        for (int[] a : mst) {
+            System.out.println(a[0] + " - " + a[1] + " peso " + a[2]);
+        }
+
+        System.out.println("\nCosto total: " + costo);
+    }
+
+    static int encontrar(int[] padre, int x) {
+        if (padre[x] == x) return x;
+        return encontrar(padre, padre[x]);
+    }
+}
